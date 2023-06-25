@@ -1,0 +1,29 @@
+{
+  "name": "sonastik",
+  "version": "1.0.0",
+  "description": "The browser extension for explaining Estonian word.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chloe-matt/sonastik.git"
+  },
+  "keywords": [
+    "dictionary",
+    "language",
+    "learning",
+    "browser",
+    "extension"
+  ],
+  "author": "Asep Bagja Priandana <asep@chloematt.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chloe-matt/sonastik/issues"
+  },
+  "homepage": "https://github.com/chloe-matt/sonastik.git#readme",
+  "devDependencies": {
+    "web-ext": "^7.6.2"
+  }
+}
