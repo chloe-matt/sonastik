@@ -25,7 +25,7 @@ browser.runtime.onMessage.addListener((message) => {
       if (meaning.examples.length === 0) {
         popoverContent += `<p><i>No examples found.</i></p>`;
       } else {
-        popoverContent += `<ul>`;
+        popoverContent += `<ul style="margin-left: 20px;">`;
         meaning.examples.forEach((example) => {
           popoverContent += `<li>${example}</li>`;
         });
@@ -34,7 +34,7 @@ browser.runtime.onMessage.addListener((message) => {
 
       if (meaning.synonyms.length > 0) {
         popoverContent += `<p>Synonyms:</p>`;
-        popoverContent += `<ul>`;
+        popoverContent += `<ul style="margin-left: 20px;">`;
         meaning.synonyms.forEach((synonym) => {
           popoverContent += `<li>${synonym}</li>`;
         });
