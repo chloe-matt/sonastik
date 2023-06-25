@@ -6,8 +6,80 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <hgroup>
-    <h1>Sõnastik</h1>
-    <p>version 1.0</p>
-  </hgroup>
+  <div class="so-container">
+    <div class="icon">
+    <figure>
+      <img src="icons/icon48.png" alt="Sõnastik" />
+    </figure>
+    </div>
+    <hgroup>
+      <h1>Sõnastik</h1>
+      <p>version 1.0</p>
+    </hgroup>
+    <footer>
+      <p>Copyright &copy; 2023 <a href="https://www.chloematt.com">Chloe & Matt</a></p>
+      <p>Developed by <a href="https://www.asepbagja.com">Asep Bagja Priandana</a></p>
+      <p>Licensed under <a href="https://github.com/chloe-matt/sonastik">MIT license</a></p>
+    </footer>
+  </div>
+
+  <style>
+    body {
+      text-align: center;
+      padding: 0;
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .so-container {
+      padding: 20px;
+    }
+
+    .so-container .icon {
+      display: flex;
+      justify-content: center;
+    }
+
+    .so-container .icon figure {
+      margin: 0;
+      padding: 5px;
+      border-radius: 5px;
+      border: 1px solid #b7b6b6;
+      width: 48px;
+      height: 48px;
+      background-color: #ccc;
+    }
+
+    .so-container hgroup {
+      margin: 0;
+      padding: 20px 0 10px 0;
+    }
+
+    .so-container hgroup h1 {
+      margin: 0;
+      padding: 0;
+      font-size: 1.5em;
+    }
+
+    .so-container hgroup p {
+      margin: 0;
+      padding: 0;
+      font-size: 0.8em;
+    }
+
+    .so-container footer {
+      margin: 0;
+      padding: 10px 0 0 0;
+    }
+
+    .so-container footer p {
+      margin: 0;
+      padding: 2px;
+      font-size: 0.8em;
+    }
+
+    .so-container footer p a {
+      color: #0072CE;
+    }
+  </style>
 </html>

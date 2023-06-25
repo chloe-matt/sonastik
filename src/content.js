@@ -100,9 +100,11 @@ browser.runtime.onMessage.addListener((message) => {
     popover.style.backgroundColor = 'white';
     popover.style.padding = '8px';
     popover.style.border = '1px solid gray';
-
-    // Make the popover z-index higher than other elements in the page
     popover.style.zIndex = '9999';
+
+    // Make the popover height fix with scrollable content
+    popover.style.maxHeight = '200px';
+    popover.style.overflowY = 'auto';
 
     // Function to close the popover
     const closePopover = () => {
