@@ -91,8 +91,16 @@ browser.runtime.onMessage.addListener((message) => {
     popoverContent += '</tbody>';
     popoverContent += '</table>';
     
-    // Inject popover content to the popover element
-    popover.innerHTML = popoverContent;
+    // Using DOMParser to parse the HTML string to DOM nodes
+    const parser = new DOMParser();
+    const popoverContentDOM = parser.parseFromString(popoverContent, 'text/html');
+    const tags = popoverContentDOM.getElementsByTagName('body');
+
+    // Get the innerHTML of the body tag
+    popover.innerHTML = '';
+    for (const tag of tags) {
+      popover.appendChild(tag);
+    }
 
     popover.style.position = 'absolute';
     popover.style.top = `${rect.top + window.scrollY}px`;
