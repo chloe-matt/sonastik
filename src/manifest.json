@@ -1,14 +1,14 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Sõnastik",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "The word explanation for Estonian language",
   "permissions": ["activeTab", "contextMenus"],
   "background": {
-    "scripts": ["browser-polyfill.js", "background.js"],
-    "persistent": false
+    "service_worker": "background.js",
+    "type": "module"
   },
-  "browser_action": {
+  "action": {
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -17,8 +17,8 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["browser-polyfill.js", "content.js"],
+      "matches": ["https://*/*"],
+      "js": ["content.js"],
       "run_at": "document_end"
     }
   ],

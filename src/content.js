@@ -1,5 +1,5 @@
 // Receive the message from the background script.
-browser.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener((message) => {
   if (message.action === 'openPopover') {
     const { data } = message;
 
