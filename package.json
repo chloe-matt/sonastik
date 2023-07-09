@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:firefox": "web-ext run --source-dir ./src/",
-    "build": "web-ext build --source-dir ./src/"
+    "build:firefox": "web-ext build --source-dir ./firefox/src/",
+    "build:chrome": "web-ext build --source-dir ./chrome/src/"
   },
   "repository": {
     "type": "git",
