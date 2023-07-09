@@ -1,5 +1,3 @@
-const browser = window.browser || window.chrome;
-
 // Create the context menu item
 browser.contextMenus.create({
   id: 'explainWord',
