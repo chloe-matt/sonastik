@@ -1,12 +1,12 @@
 // Create the context menu item
-chrome.contextMenus.create({
+browser.contextMenus.create({
   id: 'explainWord',
   title: 'Explain "%s"',
   contexts: ['selection'] // Show the context menu item when text is selected
 });
 
 // Add an event listener for when the menu item is clicked
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+browser.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === 'explainWord') {
     // Perform the action you want when the menu item is clicked
     const selectedText = info.selectionText;
@@ -14,10 +14,10 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     // Get the word explanation from the API
     getWordExplanation(selectedText).then((data) => {
       // Send a message to the content script to open the popover
-      chrome.tabs.sendMessage(tab.id, { action: 'openPopover', data });
+      browser.tabs.sendMessage(tab.id, { action: 'openPopover', data });
     }).catch((error) => {
       // Send a message to the content script to show an error message
-      chrome.tabs.sendMessage(tab.id, { action: 'showError', error });
+      browser.tabs.sendMessage(tab.id, { action: 'showError', error });
     });
   }
 });
