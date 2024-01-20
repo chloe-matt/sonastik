@@ -1,6 +1,6 @@
 {
   "name": "sonastik",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "The browser extension for explaining Estonian word.",
   "main": "index.js",
   "scripts": {

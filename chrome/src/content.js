@@ -11,141 +11,124 @@ chrome.runtime.onMessage.addListener((message) => {
     // Calculate the popover position relative to the selected text
     const popover = document.createElement("div");
 
-    let popoverContent = `<h2 style="color: #000000;">${data.word}</h2>`;
-    // create badge for part of speech
-    popoverContent += `<p style="margin: 10px 0;"><span style="background-color: #d2dded; padding: 5px; border-radius: 5px;">${data.partOfSpeech.join(
-      ", "
-    )}</span></p>`;
+    let popoverContent = `<h2 style="color: #000000;">${data.requestedWord}</h2>`;
 
-    data.meanings.forEach((meaning, idx) => {
-      popoverContent += `<div style="margin: 20px 0;">`;
-      popoverContent += `<h3 style="color: #000000;">Definition ${
-        idx + 1
-      }</strong></h3>`;
-      popoverContent += `<p style="color: #000000;">${meaning.definition}</p>`;
+    const enTranslation = data.translations.find((translation) => translation.to === "en");
 
-      popoverContent += `<p style="margin-top: 20px; color: #000000;">Example:</p>`;
-
-      if (meaning.examples.length === 0) {
-        popoverContent += `<p style="color: #000000;"><i>No examples found.</i></p>`;
-      } else {
-        popoverContent += `<ul style="color: #000000;">`;
-        meaning.examples.forEach((example) => {
-          popoverContent += `<li>${example}</li>`;
-        });
-        popoverContent += `</ul>`;
-      }
-
-      if (meaning.synonyms.length > 0) {
-        popoverContent += `<p style="margin-top: 20px; color: #000000;">Synonyms:</p>`;
-        popoverContent += `<ul style="color: #000000;">`;
-        meaning.synonyms.forEach((synonym) => {
-          popoverContent += `<li>${synonym}</li>`;
-        });
-        popoverContent += `</ul>`;
-      }
-      popoverContent += `</div>`;
-    });
-
-    popoverContent += '<h3 style="color: #000000;">Word forms</h3>';
-
-    // Showing word forms as a table: data.wordForms is a key-value object
-    popoverContent +=
-      '<table style="width: 100%; border-collapse: collapse; color: #000000;">';
-    popoverContent += "<thead>";
-    popoverContent += "<tr>";
-    popoverContent +=
-      '<th style="border: 1px solid gray; padding: 5px;">Form</th>';
-    popoverContent +=
-      '<th style="border: 1px solid gray; padding: 5px;">Word</th>';
-    popoverContent += "</tr>";
-    popoverContent += "</thead>";
-    popoverContent += "<tbody>";
-    Object.keys(data.wordForms).forEach((form) => {
-      popoverContent += "<tr>";
-      popoverContent += `<td style="border: 1px solid gray; padding: 5px;">${form}</td>`;
-
-      // data.wordForms[form] has two possibilities: string or key-value object.
-      // If it's a string, it means that the word form is the same as the original word.
-      // If it's a key-value object, it means we have to loop again with Object.entries()
-      // to get the word forms.
-      if (typeof data.wordForms[form] === "string") {
-        popoverContent += `<td style="border: 1px solid gray; padding: 5px;">${data.wordForms[form]}</td>`;
-      } else {
-        popoverContent += '<td style="border: 1px solid gray; padding: 5px;">';
-        popoverContent +=
-          '<table style="width: 100%; border-collapse: collapse;">';
-        popoverContent += "<thead>";
-        popoverContent += "<tr>";
-        popoverContent +=
-          '<th style="border: 1px solid gray; padding: 5px;">Form</th>';
-        popoverContent +=
-          '<th style="border: 1px solid gray; padding: 5px;">Word</th>';
-
-        popoverContent += "</tr>";
-        popoverContent += "</thead>";
-        popoverContent += "<tbody>";
-        Object.entries(data.wordForms[form]).forEach(([key, value]) => {
-          popoverContent += "<tr>";
-          popoverContent += `<td style="border: 1px solid gray; padding: 5px;">${key}</td>`;
-          popoverContent += `<td style="border: 1px solid gray; padding: 5px;">${value}</td>`;
-          popoverContent += "</tr>";
-        });
-        popoverContent += "</tbody>";
-        popoverContent += "</table>";
-        popoverContent += "</td>";
-      }
-
-      popoverContent += "</tr>";
-    });
-    popoverContent += "</tbody>";
-    popoverContent += "</table>";
-
-    // Using DOMParser to parse the HTML string to DOM nodes
-    const parser = new DOMParser();
-    const popoverContentDOM = parser.parseFromString(
-      popoverContent,
-      "text/html"
-    );
-    const tags = popoverContentDOM.getElementsByTagName("body");
-
-    // Get the innerHTML of the body tag
-    popover.innerHTML = "";
-    for (const tag of tags) {
-      popover.appendChild(tag);
+    if (enTranslation?.translations.length > 0) {
+      popoverContent += `<p style="margin: 20px 0 0 0; color: #000000;">English translation:</p>`;
+      popoverContent += `<ul style="color: #000000;">`;
+      enTranslation.translations.forEach((word) => {
+        popoverContent += `<li>${word}</li>`;
+      });
+      popoverContent += `</ul>`;
     }
 
-    popover.style.position = "absolute";
-    // Make the popover position always the center of the screen relative
-    const popoverWidth = popover.offsetWidth;
-    const popoverHeight = popover.offsetHeight;
-    const viewportWidth = document.documentElement.clientWidth;
-    const viewportHeight = document.documentElement.clientHeight;
-    const scrollTop = window.scrollY;
-    const scrollLeft = window.scrollX;
-    const top = rect.top + scrollTop + rect.height / 2 - popoverHeight / 2;
-    const left = rect.left + scrollLeft + rect.width / 2 - popoverWidth / 2;
-    const maxTop = scrollTop + viewportHeight - popoverHeight;
-    const maxLeft = scrollLeft + viewportWidth - popoverWidth;
-    popover.style.top = `${Math.min(Math.max(top, scrollTop), maxTop)}px`;
-    popover.style.left = `${Math.min(Math.max(left, scrollLeft), maxLeft)}px`;
+    data.searchResult.forEach((result) => {
+      // create badge for part of speech
+      popoverContent += `<p style="margin: 20px 0;"><span style="background-color: #d2dded; padding: 5px; border-radius: 5px;">${result.wordClasses.join(
+        ", "
+      )}</span></p>`;
 
-    popover.style.backgroundColor = "white";
-    popover.style.padding = "8px";
-    popover.style.border = "1px solid gray";
-    popover.style.zIndex = "9999";
-    popover.style.width = "500px";
+      result.meanings.forEach((meaning, idx) => {
+        popoverContent += `<div style="margin: 20px 0;">`;
+        popoverContent += `<h3 style="color: #000000;">Definition ${
+          idx + 1
+        }</strong></h3>`;
+        popoverContent += `<p style="color: #000000;">${meaning.definition}</p>`;
 
-    // Make the popover height fix with scrollable content
-    popover.style.maxHeight = "200px";
-    popover.style.overflowY = "auto";
+        popoverContent += `<p style="margin-top: 20px; color: #000000;">Example:</p>`;
 
-    // Make the popover div > body padding 0
-    popover.childNodes[0].style.padding = "0";
-    popover.childNodes[0].style.margin = "0";
-    popover.childNodes[0].style.backgroundColor = "white";
-    popover.childNodes[0].style.textAlign = "left";
-    popover.childNodes[0].style.minWidth = "fit-content";
+        if (meaning.examples.length === 0) {
+          popoverContent += `<p style="color: #000000;"><i>No examples found.</i></p>`;
+        } else {
+          popoverContent += `<ul style="color: #000000;">`;
+          meaning.examples.forEach((example) => {
+            popoverContent += `<li>${example}</li>`;
+          });
+          popoverContent += `</ul>`;
+        }
+
+        if (meaning.synonyms.length > 0) {
+          popoverContent += `<p style="margin-top: 20px; color: #000000;">Synonyms:</p>`;
+          popoverContent += `<ul style="color: #000000;">`;
+          meaning.synonyms.forEach((synonym) => {
+            popoverContent += `<li>${synonym}</li>`;
+          });
+          popoverContent += `</ul>`;
+        }
+        popoverContent += `</div>`;
+      });
+
+      popoverContent += '<h3 style="color: #000000;">Word forms</h3>';
+
+      // Showing word forms as a table: data.wordForms is a key-value object
+      popoverContent +=
+        '<table style="width: 100%; border-collapse: collapse; color: #000000;">';
+      popoverContent += "<thead>";
+      popoverContent += "<tr>";
+      popoverContent +=
+        '<th style="border: 1px solid gray; padding: 5px;">Form</th>';
+      popoverContent +=
+        '<th style="border: 1px solid gray; padding: 5px;">Word</th>';
+      popoverContent += "</tr>";
+      popoverContent += "</thead>";
+      popoverContent += "<tbody>";
+      result.wordForms.forEach((form) => {
+        popoverContent += "<tr>";
+        popoverContent += `<td style="border: 1px solid gray; padding: 5px;">${form.morphValue}</td>`;
+        popoverContent += `<td style="border: 1px solid gray; padding: 5px;">${form.value}</td>`;
+        popoverContent += "</tr>";
+      });
+      popoverContent += "</tbody>";
+      popoverContent += "</table>";
+
+      // Using DOMParser to parse the HTML string to DOM nodes
+      const parser = new DOMParser();
+      const popoverContentDOM = parser.parseFromString(
+        popoverContent,
+        "text/html"
+      );
+      const tags = popoverContentDOM.getElementsByTagName("body");
+
+      // Get the innerHTML of the body tag
+      popover.innerHTML = "";
+      for (const tag of tags) {
+        popover.appendChild(tag);
+      }
+
+      popover.style.position = "absolute";
+      // Make the popover position always the center of the screen relative
+      const popoverWidth = popover.offsetWidth;
+      const popoverHeight = popover.offsetHeight;
+      const viewportWidth = document.documentElement.clientWidth;
+      const viewportHeight = document.documentElement.clientHeight;
+      const scrollTop = window.scrollY;
+      const scrollLeft = window.scrollX;
+      const top = rect.top + scrollTop + rect.height / 2 - popoverHeight / 2;
+      const left = rect.left + scrollLeft + rect.width / 2 - popoverWidth / 2;
+      const maxTop = scrollTop + viewportHeight - popoverHeight;
+      const maxLeft = scrollLeft + viewportWidth - popoverWidth;
+      popover.style.top = `${Math.min(Math.max(top, scrollTop), maxTop)}px`;
+      popover.style.left = `${Math.min(Math.max(left, scrollLeft), maxLeft)}px`;
+
+      popover.style.backgroundColor = "white";
+      popover.style.padding = "8px";
+      popover.style.border = "1px solid gray";
+      popover.style.zIndex = "9999";
+      popover.style.width = "500px";
+
+      // Make the popover height fix with scrollable content
+      popover.style.maxHeight = "200px";
+      popover.style.overflowY = "auto";
+
+      // Make the popover div > body padding 0
+      popover.childNodes[0].style.padding = "0";
+      popover.childNodes[0].style.margin = "0";
+      popover.childNodes[0].style.backgroundColor = "white";
+      popover.childNodes[0].style.textAlign = "left";
+      popover.childNodes[0].style.minWidth = "fit-content";
+    });
 
     // Make the popover div > ol and ul padding 0
     const lists = popover.querySelectorAll("ol, ul");

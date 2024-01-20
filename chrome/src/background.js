@@ -28,7 +28,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 function getWordExplanation(word) {
   // Make a GET request to the API
-  return fetch(`https://api.sonapi.ee/v1/${word}`)
+  return fetch(`https://api.sonapi.ee/v2/${word}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error(`The definition for "${word}" could not be found.`);
