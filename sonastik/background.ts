@@ -2,7 +2,7 @@
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "explainWord",
-    title: '[DEV] Explain "%s"',
+    title: 'Explain "%s"',
     contexts: ["selection"] // Show the context menu item when text is selected
   })
 })
