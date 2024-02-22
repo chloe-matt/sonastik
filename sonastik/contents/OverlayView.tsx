@@ -18,7 +18,7 @@ import {
 import { useDisclosure } from "@mantine/hooks"
 import { IconMoodConfuzedFilled } from "@tabler/icons-react"
 import globalCss from "data-text:@mantine/core/styles.css"
-import shadowCss from "data-text:~/contents/shadow.css"
+import shadowCss from "data-text:~/assets/shadow.css"
 import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo"
 import { useEffect, useState } from "react"
 
@@ -57,8 +57,6 @@ const OverlayView = () => {
     return null
   }
 
-  console.log(message)
-
   const isEmptyResult = message.data.searchResult.length === 0
 
   return (
@@ -67,9 +65,12 @@ const OverlayView = () => {
         opened={opened}
         onClose={close}
         title={
-          <Text>
-            Explanation for: <b>{message.data.estonianWord}</b>
-          </Text>
+          <>
+            <Text>
+              Explanation for: <b>{message.data.estonianWord}.</b>
+            </Text>
+            <Text size="xs">The explanation comes from Sonaveeb.ee.</Text>
+          </>
         }
         centered
         size="xl">
@@ -129,19 +130,6 @@ const ExplanationArea = ({ data }) => {
         })}
       </Tabs>
     </Box>
-  )
-}
-
-const WordClasses = ({ wordClasses }) => {
-  return (
-    <Flex align="center" justify="start" gap="md">
-      <Text>Word classes: </Text>
-      {wordClasses.map((wordClass, idx) => (
-        <Badge key={`class-${idx}`} color="blue">
-          {wordClass}
-        </Badge>
-      ))}
-    </Flex>
   )
 }
 
@@ -256,14 +244,19 @@ const WordForms = ({ wordForms }) => {
 
 const EmptyState = ({ word }) => {
   return (
-    <Center>
-      <Stack gap="md">
-        <Center>
-          <IconMoodConfuzedFilled size={150} />
-        </Center>
-        <Text>Sorry! "{word}" can not be found.</Text>
+    <Box>
+      <Center>
+        <IconMoodConfuzedFilled size={150} />
+      </Center>
+      <Stack gap={0}>
+        <Text style={{ textAlign: "center" }}>
+          The word explanation data comes from Sonaveeb.ee.
+        </Text>
+        <Text style={{ textAlign: "center" }}>
+          However, "{word}" can not be found there. Try selecting only the root of the word.
+        </Text>
       </Stack>
-    </Center>
+    </Box>
   )
 }
 

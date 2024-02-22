@@ -1,9 +1,9 @@
 {
   "name": "sonastik",
   "displayName": "Sonastik",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "description": "A word explainer for Estonian language.",
-  "author": "Chloe & Matt, <hi@chloematt.com>",
+  "author": "Chloe & Matt OÜ <hi@chloematt.com>",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
