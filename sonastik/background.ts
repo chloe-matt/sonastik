@@ -16,7 +16,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     // Get the word explanation from the API
     getWordExplanation({ word: selectedText, tab })
       .then((data) => {
-        console.log(data)
         // Send a message to the content script to open the popover
         chrome.tabs.sendMessage(tab.id, { action: "openPopover", data })
       })
