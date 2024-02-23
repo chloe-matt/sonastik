@@ -31,3 +31,6 @@ dist/
 
 # typescript
 .tsbuildinfo
+
+# Remove all zip files
+*.zip
