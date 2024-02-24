@@ -51,35 +51,33 @@ const OverlayView = () => {
     return () => {
       chrome.runtime.onMessage.removeListener(messageListener)
     }
-  }, [])
+  }, [message])
 
-  if (!message || message.action !== "openPopover") {
-    return null
-  }
-
-  const isEmptyResult = message.data.searchResult.length === 0
+  const isEmptyResult = message?.data?.searchResult?.length === 0
 
   return (
     <MantineProvider cssVariablesSelector=":host">
-      <Modal
-        opened={opened}
-        onClose={close}
-        title={
-          <>
-            <Text>
-              Explanation for: <b>{message.data.estonianWord}.</b>
-            </Text>
-            <Text size="xs">The explanation comes from Sonaveeb.ee.</Text>
-          </>
-        }
-        centered
-        size="xl">
-        {isEmptyResult ? (
-          <EmptyState word={message.data.estonianWord} />
-        ) : (
-          <ExplanationArea data={message.data} />
-        )}
-      </Modal>
+      {!message || message.action !== "openPopover" ? null : (
+        <Modal
+          opened={opened}
+          onClose={close}
+          title={
+            <>
+              <Text>
+                Explanation for: <b>{message.data.estonianWord}.</b>
+              </Text>
+              <Text size="xs">The explanation comes from Sonaveeb.ee.</Text>
+            </>
+          }
+          centered
+          size="xl">
+          {isEmptyResult ? (
+            <EmptyState word={message.data.estonianWord} />
+          ) : (
+            <ExplanationArea data={message.data} />
+          )}
+        </Modal>
+      )}
     </MantineProvider>
   )
 }
@@ -253,7 +251,8 @@ const EmptyState = ({ word }) => {
           The word explanation data comes from Sonaveeb.ee.
         </Text>
         <Text style={{ textAlign: "center" }}>
-          However, "{word}" can not be found there. Try selecting only the root of the word.
+          However, "{word}" can not be found there. Try selecting only the root
+          of the word.
         </Text>
       </Stack>
     </Box>
