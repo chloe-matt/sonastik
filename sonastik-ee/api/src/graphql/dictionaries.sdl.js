@@ -1,0 +1,45 @@
+export const schema = gql`
+  type Query {
+    dictionary(requestedWord: String!): Dictionary @skipAuth
+  }
+
+  type Dictionary {
+    requestedWord: String!
+    estonianWord: String!
+    searchResult: [SearchResult]
+    translations: [Translation]
+  }
+
+  type SearchResult {
+    wordClasses: [String]
+    wordForms: [WordForm]
+    meanings: [Meaning]
+    similarWords: [String]
+  }
+
+  type WordForm {
+    inflectionType: String!
+    code: String!
+    morphValue: String!
+    value: String!
+  }
+
+  type PartOfSpeech {
+    code: String!
+    name: String!
+  }
+
+  type Meaning {
+    definition: String!
+    partOfSpeech: [PartOfSpeech]
+    examples: [String]
+    synonyms: [String]
+  }
+
+  type Translation {
+    from: String!
+    to: String!
+    input: String!
+    translations: [String]
+  }
+`;
