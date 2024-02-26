@@ -1,23 +1,21 @@
+import '@mantine/core/styles.css'
 import { FatalErrorBoundary, RedwoodProvider } from '@redwoodjs/web'
 import { RedwoodApolloProvider } from '@redwoodjs/web/apollo'
-import { createTheme, MantineProvider } from '@mantine/core'
+import { MantineProvider } from '@mantine/core'
+import mantineConfig from '../config/mantine.config'
 import FatalErrorPage from 'src/pages/FatalErrorPage'
 import Routes from 'src/Routes'
 
-const theme = createTheme({
-  /** Your theme override here */
-})
-
 const App = () => (
-  <MantineProvider theme={theme}>
-    <FatalErrorBoundary page={FatalErrorPage}>
-      <RedwoodProvider titleTemplate="%PageTitle | %AppTitle">
+  <FatalErrorBoundary page={FatalErrorPage}>
+    <RedwoodProvider titleTemplate="%PageTitle | %AppTitle">
+      <MantineProvider theme={mantineConfig}>
         <RedwoodApolloProvider>
           <Routes />
         </RedwoodApolloProvider>
-      </RedwoodProvider>
-    </FatalErrorBoundary>
-  </MantineProvider>
+      </MantineProvider>
+    </RedwoodProvider>
+  </FatalErrorBoundary>
 )
 
 export default App
