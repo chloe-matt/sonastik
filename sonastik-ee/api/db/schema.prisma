@@ -16,9 +16,12 @@ generator client {
 
 // words analytics table
 model WordLog {
-  id        Int      @id @default(autoincrement())
-  word      String
-  count     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  word          String   @unique
+  totalFound    Int      @default(0)
+  totalNotFound Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([word])
 }
