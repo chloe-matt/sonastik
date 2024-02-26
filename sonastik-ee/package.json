@@ -7,6 +7,7 @@
     ]
   },
   "devDependencies": {
+    "@redwoodjs/cli-data-migrate": "7.0.2",
     "@redwoodjs/core": "7.0.2",
     "@redwoodjs/project-config": "7.0.2"
   },
