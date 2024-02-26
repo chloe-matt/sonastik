@@ -56,8 +56,8 @@ const HomePage = () => {
                       <Image
                         src="/chrome-store.png"
                         alt="Chrome icon"
-                        h={60}
-                        w="auto"
+                        h={{ base: 'auto', md: 60 }}
+                        w={{ base: 100, md: 'auto' }}
                       />
                     </Anchor>
                     <Anchor
@@ -67,8 +67,8 @@ const HomePage = () => {
                       <Image
                         src="/firefox-addons.svg"
                         alt="Firefox icon"
-                        h={60}
-                        w="auto"
+                        h={{ base: 'auto', md: 60 }}
+                        w={{ base: 100, md: 'auto' }}
                       />
                     </Anchor>
                   </Flex>
@@ -76,7 +76,12 @@ const HomePage = () => {
               </Center>
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6 }}>
-              <Image src="/main-image.jpg" alt="Main image" />
+              <Image
+                src="/main-image.jpg"
+                alt="Main image"
+                h={{ base: 'auto', md: '100%' }}
+                w={{ base: '100%' }}
+              />
             </Grid.Col>
           </Grid>
         </AppShell.Main>
