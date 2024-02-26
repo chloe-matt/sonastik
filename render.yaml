@@ -6,7 +6,7 @@ services:
 - name: sonastik-ee-web
   type: web
   env: static
-  buildCommand: corepack enable && yarn install && yarn rw deploy render web
+  buildCommand: cd sonastik-ee && corepack enable && yarn install && yarn rw deploy render web
   staticPublishPath: ./web/dist
 
   envVars:
@@ -31,8 +31,8 @@ services:
   plan: free
   env: node
   region: frankfurt
-  buildCommand: corepack enable && yarn && yarn rw build api
-  startCommand: yarn rw deploy render api
+  buildCommand: cd sonastik-ee && corepack enable && yarn && yarn rw build api
+  startCommand: cd sonastik-ee &&  yarn rw deploy render api
 
   envVars:
   - key: DATABASE_URL
