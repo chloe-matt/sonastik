@@ -5,6 +5,7 @@
 services:
 - name: sonastik-ee-web
   type: web
+  plan: free
   env: static
   buildCommand: cd sonastik-ee && corepack enable && yarn install && yarn rw deploy render web
   staticPublishPath: ./web/dist
@@ -43,3 +44,4 @@ services:
 databases:
   - name: sonastik-ee-db
     region: frankfurt
+    plan: free
