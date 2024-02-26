@@ -7,7 +7,7 @@ services:
   type: web
   env: static
   buildCommand: cd sonastik-ee && corepack enable && yarn install && yarn rw deploy render web
-  staticPublishPath: ./web/dist
+  staticPublishPath: ./sonastik-ee/web/dist
 
   envVars:
   - key: SKIP_INSTALL_DEPS
