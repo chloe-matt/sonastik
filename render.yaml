@@ -15,7 +15,7 @@ services:
 
   routes:
   - type: rewrite
-    source: /.redwood/functions/*
+    source: /sonastik-ee/.redwood/functions/*
     # Replace `destination` here after your first deploy:
     #
     # ```
