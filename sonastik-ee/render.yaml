@@ -30,7 +30,7 @@ services:
   type: web
   plan: free
   env: node
-  region: oregon
+  region: frankfurt
   buildCommand: corepack enable && yarn && yarn rw build api
   startCommand: yarn rw deploy render api
 
