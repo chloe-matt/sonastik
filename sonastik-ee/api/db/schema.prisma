@@ -13,3 +13,12 @@ generator client {
   provider      = "prisma-client-js"
   binaryTargets = "native"
 }
+
+// words analytics table
+model WordLog {
+  id        Int      @id @default(autoincrement())
+  word      String
+  count     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
