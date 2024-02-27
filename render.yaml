@@ -40,7 +40,7 @@ services:
       name: sonastik-ee-db
       property: connectionString
   - key: CACHE_HOST
-    fromDatabase:
+    fromService:
       name: sonastik-redis
       property: connectionString
   - key: DEEPL_API_KEY
