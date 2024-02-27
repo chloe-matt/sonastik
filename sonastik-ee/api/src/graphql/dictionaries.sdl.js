@@ -55,4 +55,4 @@ export const schema = gql`
     detected_source_language: String!
     text: String!
   }
-`;
+`

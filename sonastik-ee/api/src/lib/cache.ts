@@ -1,8 +1,4 @@
-import {
-  createCache,
-  InMemoryClient,
-  RedisClient,
-} from '@redwoodjs/api/cache'
+import { createCache, InMemoryClient, RedisClient } from '@redwoodjs/api/cache'
 
 import { logger } from './logger'
 
@@ -18,7 +14,8 @@ if (process.env.NODE_ENV === 'test') {
   }
 }
 
-export const { cache, cacheFindMany, cacheClient, deleteCacheKey } = createCache(client, {
-  logger,
-  timeout: 500,
-})
+export const { cache, cacheFindMany, cacheClient, deleteCacheKey } =
+  createCache(client, {
+    logger,
+    timeout: 500,
+  })
