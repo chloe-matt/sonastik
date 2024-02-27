@@ -41,6 +41,7 @@ services:
       property: connectionString
   - key: CACHE_HOST
     fromService:
+      type: redis
       name: sonastik-redis
       property: connectionString
   - key: DEEPL_API_KEY
@@ -52,6 +53,7 @@ services:
   ipAllowList: # required
     - source: 0.0.0.0/0
       description: everywhere
+  region: frankfurt
   plan: free # optional (defaults to starter instance type)
 
 databases:
