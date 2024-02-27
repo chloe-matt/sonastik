@@ -31,6 +31,10 @@ export const schema = gql`
 
   type Meaning {
     definition: String!
+    """
+    Definition in English, it's machine translated from DeepL.
+    """
+    definitionEn: DeepL
     partOfSpeech: [PartOfSpeech]
     examples: [String]
     synonyms: [String]
@@ -42,4 +46,13 @@ export const schema = gql`
     input: String!
     translations: [String]
   }
-`;
+
+  type DeepL {
+    translations: [DeepLResponse]
+  }
+
+  type DeepLResponse {
+    detected_source_language: String!
+    text: String!
+  }
+`

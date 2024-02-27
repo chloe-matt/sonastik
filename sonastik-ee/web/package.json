@@ -11,9 +11,9 @@
     ]
   },
   "dependencies": {
-    "@redwoodjs/forms": "7.0.2",
-    "@redwoodjs/router": "7.0.2",
-    "@redwoodjs/web": "7.0.2",
+    "@redwoodjs/forms": "7.0.3",
+    "@redwoodjs/router": "7.0.3",
+    "@redwoodjs/web": "7.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
@@ -21,7 +21,7 @@
     "@emotion/react": "^11.11.3",
     "@mantine/core": "^7.6.0",
     "@mantine/hooks": "^7.6.0",
-    "@redwoodjs/vite": "7.0.2",
+    "@redwoodjs/vite": "7.0.3",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
     "postcss": "^8.4.35",
