@@ -39,6 +39,20 @@ services:
     fromDatabase:
       name: sonastik-ee-db
       property: connectionString
+  - key: CACHE_HOST
+    fromDatabase:
+      name: sonastik-redis
+      property: connectionString
+  - key: DEEPL_API_KEY
+    sync: false
+
+# A Redis instance
+- type: redis
+  name: sonastik-redis
+  ipAllowList: # required
+    - source: 0.0.0.0/0
+      description: everywhere
+  plan: free # optional (defaults to starter instance type)
 
 databases:
   - name: sonastik-ee-db
