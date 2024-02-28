@@ -28,7 +28,7 @@ services:
 
 - name: sonastik-ee-api
   type: web
-  plan: free
+  plan: starter
   env: node
   region: frankfurt
   buildCommand: cd sonastik-ee && corepack enable && yarn && yarn rw build api
