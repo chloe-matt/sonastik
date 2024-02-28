@@ -7,7 +7,6 @@ import {
   InMemoryCache,
   useQuery
 } from "@apollo/client"
-import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev"
 import {
   Badge,
   Box,
@@ -16,6 +15,7 @@ import {
   List,
   MantineProvider,
   Modal,
+  Skeleton,
   Stack,
   Table,
   Tabs,
@@ -29,9 +29,6 @@ import globalCss from "data-text:@mantine/core/styles.css"
 import shadowCss from "data-text:~/assets/shadow.css"
 import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo"
 import { useEffect, useState } from "react"
-
-loadDevMessages()
-loadErrorMessages()
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"]
@@ -60,7 +57,7 @@ const GET_WORD_EXPLANATION = gql`
           }
           partOfSpeech {
             code
-            name
+            value
           }
           examples
           synonyms
@@ -100,8 +97,10 @@ const OverlayView = () => {
 
   const [opened, { open, close }] = useDisclosure(false)
 
-  const { loading, data } = useGetWordExplanation(message?.data?.requestedWord)
-  console.log("data", data)
+  const { loading, dictionary } = useGetWordExplanation(
+    message?.data?.requestedWord
+  )
+
   useEffect(() => {
     const messageListener = (message) => {
       if (message.action === "openPopover") {
@@ -118,7 +117,7 @@ const OverlayView = () => {
     }
   }, [message])
 
-  const isEmptyResult = !data || data?.searchResult?.length === 0
+  const isEmptyResult = !dictionary || dictionary?.searchResult?.length === 0
 
   return (
     <MantineProvider cssVariablesSelector=":host">
@@ -129,18 +128,20 @@ const OverlayView = () => {
           title={
             <>
               <Text>
-                Explanation for: <b>{data?.estonianWord}.</b>
+                Explanation for: <b>{dictionary?.estonianWord}.</b>
               </Text>
               <Text size="xs">The explanation comes from Sonaveeb.ee.</Text>
             </>
           }
           centered
           size="xl">
-          {isEmptyResult ? (
-            <EmptyState word={data?.estonianWord} />
-          ) : (
-            <ExplanationArea data={data} />
-          )}
+          <Skeleton visible={loading}>
+            {isEmptyResult ? (
+              <EmptyState word={dictionary?.estonianWord} />
+            ) : (
+              <ExplanationArea data={dictionary} />
+            )}
+          </Skeleton>
         </Modal>
       )}
     </MantineProvider>
@@ -243,7 +244,25 @@ const Meanings = ({ meanings }) => {
             <Badge variant="default" color="blue" radius="md" size="md">
               et
             </Badge>
-            <Text flex={1}>{meaning.definition}</Text>
+            <Text
+              flex={1}
+              dangerouslySetInnerHTML={{
+                __html: parseEkiForeignText(meaning.definition)
+              }}
+            />
+          </Flex>
+          <Flex align="center" gap="xs">
+            <Badge variant="default" color="blue" radius="md" size="md">
+              en
+            </Badge>
+            <Text
+              flex={1}
+              dangerouslySetInnerHTML={{
+                __html: parseEkiForeignText(
+                  meaning.definitionEn.translations?.[0]?.text
+                )
+              }}
+            />
           </Flex>
           {meaning.synonyms.length > 0 && (
             <Stack gap="xs">
@@ -331,5 +350,11 @@ function useGetWordExplanation(requestedWord = null) {
     fetchPolicy: "cache-first"
   })
 
-  return { loading, error, data }
+  return { loading, error, dictionary: data?.dictionary }
+}
+
+function parseEkiForeignText(text) {
+  return text
+    .replace(/<eki-foreign>/g, "<i>")
+    .replace(/<\/eki-foreign>/g, "</i>")
 }
