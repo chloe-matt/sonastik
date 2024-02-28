@@ -1,6 +1,14 @@
 import "@mantine/core/styles.css"
 
 import {
+  ApolloClient,
+  ApolloProvider,
+  gql,
+  InMemoryCache,
+  useQuery
+} from "@apollo/client"
+import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev"
+import {
   Badge,
   Box,
   Center,
@@ -22,6 +30,9 @@ import shadowCss from "data-text:~/assets/shadow.css"
 import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo"
 import { useEffect, useState } from "react"
 
+loadDevMessages()
+loadErrorMessages()
+
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"]
 }
@@ -32,11 +43,65 @@ export const getStyle: PlasmoGetStyle = () => {
   return style
 }
 
+const GET_WORD_EXPLANATION = gql`
+  query GetWordExplanation($requestedWord: String!) {
+    dictionary(requestedWord: $requestedWord) {
+      requestedWord
+      estonianWord
+      searchResult {
+        wordClasses
+        similarWords
+        meanings {
+          definition
+          definitionEn {
+            translations {
+              text
+            }
+          }
+          partOfSpeech {
+            code
+            name
+          }
+          examples
+          synonyms
+        }
+        wordForms {
+          inflectionType
+          morphValue
+          code
+          value
+        }
+      }
+      translations {
+        from
+        to
+        input
+        translations
+      }
+    }
+  }
+`
+
+const client = new ApolloClient({
+  uri: "https://sonastik-ee-api.onrender.com/graphql",
+  cache: new InMemoryCache()
+})
+
+const App = () => (
+  <ApolloProvider client={client}>
+    <OverlayView />
+  </ApolloProvider>
+)
+
+export default App
+
 const OverlayView = () => {
   const [message, setMessage] = useState(null)
 
   const [opened, { open, close }] = useDisclosure(false)
 
+  const { loading, data } = useGetWordExplanation(message?.data?.requestedWord)
+  console.log("data", data)
   useEffect(() => {
     const messageListener = (message) => {
       if (message.action === "openPopover") {
@@ -53,7 +118,7 @@ const OverlayView = () => {
     }
   }, [message])
 
-  const isEmptyResult = message?.data?.searchResult?.length === 0
+  const isEmptyResult = !data || data?.searchResult?.length === 0
 
   return (
     <MantineProvider cssVariablesSelector=":host">
@@ -64,7 +129,7 @@ const OverlayView = () => {
           title={
             <>
               <Text>
-                Explanation for: <b>{message.data.estonianWord}.</b>
+                Explanation for: <b>{data?.estonianWord}.</b>
               </Text>
               <Text size="xs">The explanation comes from Sonaveeb.ee.</Text>
             </>
@@ -72,9 +137,9 @@ const OverlayView = () => {
           centered
           size="xl">
           {isEmptyResult ? (
-            <EmptyState word={message.data.estonianWord} />
+            <EmptyState word={data?.estonianWord} />
           ) : (
-            <ExplanationArea data={message.data} />
+            <ExplanationArea data={data} />
           )}
         </Modal>
       )}
@@ -259,4 +324,12 @@ const EmptyState = ({ word }) => {
   )
 }
 
-export default OverlayView
+function useGetWordExplanation(requestedWord = null) {
+  const { loading, error, data } = useQuery(GET_WORD_EXPLANATION, {
+    variables: { requestedWord },
+    skip: !requestedWord,
+    fetchPolicy: "cache-first"
+  })
+
+  return { loading, error, data }
+}
