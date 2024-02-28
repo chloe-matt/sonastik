@@ -13,33 +13,10 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     // Perform the action you want when the menu item is clicked
     const selectedText = info.selectionText
 
-    // Get the word explanation from the API
-    getWordExplanation({ word: selectedText, tab })
-      .then((data) => {
-        // Send a message to the content script to open the popover
-        chrome.tabs.sendMessage(tab.id, { action: "openPopover", data })
-      })
-      .catch((error) => {
-        // Send a message to the content script to show an error message
-        chrome.tabs.sendMessage(tab.id, { action: "showError", error })
-      })
+    // Send a message to the content script to open the popover
+    chrome.tabs.sendMessage(tab.id, {
+      action: "openPopover",
+      data: { requestedWord: selectedText }
+    })
   }
 })
-
-function getWordExplanation({ word, tab }) {
-  // Make a GET request to the API
-  return fetch(`https://api.sonapi.ee/v2/${word}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`The definition for "${word}" could not be found.`)
-      }
-      return response.json()
-    })
-    .then((data) => {
-      return data
-    })
-    .catch((error) => {
-      // Send a message to the content script to show an error message
-      chrome.tabs.sendMessage(tab.id, { action: "showError", error })
-    })
-}

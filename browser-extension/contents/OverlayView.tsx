@@ -1,6 +1,13 @@
 import "@mantine/core/styles.css"
 
 import {
+  ApolloClient,
+  ApolloProvider,
+  gql,
+  InMemoryCache,
+  useQuery
+} from "@apollo/client"
+import {
   Badge,
   Box,
   Center,
@@ -8,6 +15,7 @@ import {
   List,
   MantineProvider,
   Modal,
+  Skeleton,
   Stack,
   Table,
   Tabs,
@@ -32,10 +40,66 @@ export const getStyle: PlasmoGetStyle = () => {
   return style
 }
 
+const GET_WORD_EXPLANATION = gql`
+  query GetWordExplanation($requestedWord: String!) {
+    dictionary(requestedWord: $requestedWord) {
+      requestedWord
+      estonianWord
+      searchResult {
+        wordClasses
+        similarWords
+        meanings {
+          definition
+          definitionEn {
+            translations {
+              text
+            }
+          }
+          partOfSpeech {
+            code
+            value
+          }
+          examples
+          synonyms
+        }
+        wordForms {
+          inflectionType
+          morphValue
+          code
+          value
+        }
+      }
+      translations {
+        from
+        to
+        input
+        translations
+      }
+    }
+  }
+`
+
+const client = new ApolloClient({
+  uri: "https://sonastik-ee-api.onrender.com/graphql",
+  cache: new InMemoryCache()
+})
+
+const App = () => (
+  <ApolloProvider client={client}>
+    <OverlayView />
+  </ApolloProvider>
+)
+
+export default App
+
 const OverlayView = () => {
   const [message, setMessage] = useState(null)
 
   const [opened, { open, close }] = useDisclosure(false)
+
+  const { loading, dictionary } = useGetWordExplanation(
+    message?.data?.requestedWord
+  )
 
   useEffect(() => {
     const messageListener = (message) => {
@@ -53,7 +117,7 @@ const OverlayView = () => {
     }
   }, [message])
 
-  const isEmptyResult = message?.data?.searchResult?.length === 0
+  const isEmptyResult = !dictionary || dictionary?.searchResult?.length === 0
 
   return (
     <MantineProvider cssVariablesSelector=":host">
@@ -64,18 +128,20 @@ const OverlayView = () => {
           title={
             <>
               <Text>
-                Explanation for: <b>{message.data.estonianWord}.</b>
+                Explanation for: <b>{dictionary?.estonianWord}.</b>
               </Text>
               <Text size="xs">The explanation comes from Sonaveeb.ee.</Text>
             </>
           }
           centered
           size="xl">
-          {isEmptyResult ? (
-            <EmptyState word={message.data.estonianWord} />
-          ) : (
-            <ExplanationArea data={message.data} />
-          )}
+          <Skeleton visible={loading}>
+            {isEmptyResult ? (
+              <EmptyState word={dictionary?.estonianWord} />
+            ) : (
+              <ExplanationArea data={dictionary} />
+            )}
+          </Skeleton>
         </Modal>
       )}
     </MantineProvider>
@@ -178,7 +244,25 @@ const Meanings = ({ meanings }) => {
             <Badge variant="default" color="blue" radius="md" size="md">
               et
             </Badge>
-            <Text flex={1}>{meaning.definition}</Text>
+            <Text
+              flex={1}
+              dangerouslySetInnerHTML={{
+                __html: parseEkiForeignText(meaning.definition)
+              }}
+            />
+          </Flex>
+          <Flex align="center" gap="xs">
+            <Badge variant="default" color="blue" radius="md" size="md">
+              en
+            </Badge>
+            <Text
+              flex={1}
+              dangerouslySetInnerHTML={{
+                __html: parseEkiForeignText(
+                  meaning.definitionEn.translations?.[0]?.text
+                )
+              }}
+            />
           </Flex>
           {meaning.synonyms.length > 0 && (
             <Stack gap="xs">
@@ -259,4 +343,18 @@ const EmptyState = ({ word }) => {
   )
 }
 
-export default OverlayView
+function useGetWordExplanation(requestedWord = null) {
+  const { loading, error, data } = useQuery(GET_WORD_EXPLANATION, {
+    variables: { requestedWord },
+    skip: !requestedWord,
+    fetchPolicy: "cache-first"
+  })
+
+  return { loading, error, dictionary: data?.dictionary }
+}
+
+function parseEkiForeignText(text) {
+  return text
+    .replace(/<eki-foreign>/g, "<i>")
+    .replace(/<\/eki-foreign>/g, "</i>")
+}

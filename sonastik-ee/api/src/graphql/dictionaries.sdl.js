@@ -18,15 +18,15 @@ export const schema = gql`
   }
 
   type WordForm {
-    inflectionType: String!
-    code: String!
-    morphValue: String!
-    value: String!
+    inflectionType: String
+    code: String
+    morphValue: String
+    value: String
   }
 
   type PartOfSpeech {
-    code: String!
-    name: String!
+    code: String
+    value: String
   }
 
   type Meaning {
@@ -41,9 +41,9 @@ export const schema = gql`
   }
 
   type Translation {
-    from: String!
-    to: String!
-    input: String!
+    from: String
+    to: String
+    input: String
     translations: [String]
   }
 
@@ -52,7 +52,7 @@ export const schema = gql`
   }
 
   type DeepLResponse {
-    detected_source_language: String!
-    text: String!
+    detected_source_language: String
+    text: String
   }
 `
