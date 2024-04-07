@@ -1,5 +1,3 @@
-import "@mantine/core/styles.css"
-
 import {
   ApolloClient,
   ApolloProvider,
@@ -10,12 +8,12 @@ import {
 import {
   Badge,
   Box,
+  Button,
   Center,
   Flex,
   List,
   MantineProvider,
-  Modal,
-  Skeleton,
+  Paper,
   Stack,
   Table,
   Tabs,
@@ -28,7 +26,7 @@ import { IconMoodConfuzedFilled } from "@tabler/icons-react"
 import globalCss from "data-text:@mantine/core/styles.css"
 import shadowCss from "data-text:~/assets/shadow.css"
 import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"]
@@ -84,7 +82,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 })
 
-const App = () => (
+const PlasmoOverlay = () => (
   <ApolloProvider client={client}>
     <MantineProvider cssVariablesSelector=":host">
       <OverlayView />
@@ -92,10 +90,11 @@ const App = () => (
   </ApolloProvider>
 )
 
-export default App
+export default PlasmoOverlay
 
 const OverlayView = () => {
   const [message, setMessage] = useState(null)
+  const containerRef = useRef(null)
 
   const [opened, { open, close }] = useDisclosure(false)
 
@@ -121,30 +120,34 @@ const OverlayView = () => {
     }
   }, [message])
 
+  useEffect(() => {
+    const container = document.querySelector("#plasmo-shadow-container")
+    containerRef.current = container
+  }, [containerRef.current])
+
   const isEmptyResult = !dictionary || dictionary?.searchResult?.length === 0
 
   return !message || message.action !== "openPopover" ? null : (
-    <Modal
+    <CustomModal
       opened={opened}
       onClose={close}
+      isLoading={loading}
       title={
         <>
           <Text style={{ color: theme.colors.dark[9] }}>
             Explanation for: <b>{dictionary?.estonianWord}.</b>
           </Text>
-          <Text size="xs" style={{ color: theme.colors.dark[9] }}>The explanation comes from Sonaveeb.ee.</Text>
+          <Text size="xs" style={{ color: theme.colors.dark[9] }}>
+            The explanation comes from Sonaveeb.ee.
+          </Text>
         </>
-      }
-      centered
-      size="xl">
-      <Skeleton visible={loading}>
-        {isEmptyResult ? (
-          <EmptyState word={dictionary?.estonianWord} />
-        ) : (
-          <ExplanationArea data={dictionary} />
-        )}
-      </Skeleton>
-    </Modal>
+      }>
+      {isEmptyResult ? (
+        <EmptyState word={dictionary?.estonianWord} />
+      ) : (
+        <ExplanationArea data={dictionary} />
+      )}
+    </CustomModal>
   )
 }
 
@@ -157,10 +160,19 @@ const ExplanationArea = ({ data }) => {
   return (
     <Box>
       <Flex align="center" justify="start" gap="xs">
-        <Badge variant="default" color="blue" radius="md" size="md">
+        <Badge
+          variant="default"
+          color="blue"
+          radius="md"
+          size="md"
+          style={{
+            border: `1px solid ${theme.colors.gray[5]}`
+          }}>
           et
         </Badge>
-        <Title order={2} style={{ color: theme.colors.dark[9] }}>{estonianWord}</Title>
+        <Title order={2} style={{ color: theme.colors.dark[9] }}>
+          {estonianWord}
+        </Title>
       </Flex>
       {translations.length > 0 && <Translations translations={translations} />}
 
@@ -169,7 +181,10 @@ const ExplanationArea = ({ data }) => {
           {searchResult.map((result, idx) => {
             const wordClasses = result.wordClasses.join(", ")
             return (
-              <Tabs.Tab key={`tab-list-${idx}`} value={`${wordClasses}-${idx}`} style={{ color: theme.colors.dark[9] }}>
+              <Tabs.Tab
+                key={`tab-list-${idx}`}
+                value={`${wordClasses}-${idx}`}
+                style={{ color: theme.colors.dark[9] }}>
                 {idx + 1}. {wordClasses}
               </Tabs.Tab>
             )
@@ -211,10 +226,19 @@ const Translations = ({ translations }) => {
 
         return (
           <Flex key={`translation-${idx}`} gap="sm">
-            <Badge variant="default" color="blue" radius="md" size="md">
+            <Badge
+              variant="default"
+              color="blue"
+              radius="md"
+              size="md"
+              style={{
+                border: `1px solid ${theme.colors.gray[5]}`
+              }}>
               {translation.to}
             </Badge>
-            <Text style={{ color: theme.colors.dark[9] }}>{translation.translations.join(", ")}</Text>
+            <Text style={{ color: theme.colors.dark[9] }}>
+              {translation.translations.join(", ")}
+            </Text>
           </Flex>
         )
       })}
@@ -227,8 +251,12 @@ const SimilarWords = ({ similarWords }) => {
 
   return (
     <Stack gap="xs">
-      <Title order={3} style={{ color: theme.colors.dark[9] }}>Similar words:</Title>
-      <Text style={{ color: theme.colors.dark[9] }}>{similarWords.join(", ")}</Text>
+      <Title order={3} style={{ color: theme.colors.dark[9] }}>
+        Similar words:
+      </Title>
+      <Text style={{ color: theme.colors.dark[9] }}>
+        {similarWords.join(", ")}
+      </Text>
     </Stack>
   )
 }
@@ -238,7 +266,9 @@ const Meanings = ({ meanings }) => {
 
   return (
     <Stack gap="xs">
-      <Title order={3} style={{ color: theme.colors.dark[9] }}>Meanings:</Title>
+      <Title order={3} style={{ color: theme.colors.dark[9] }}>
+        Meanings:
+      </Title>
       {meanings.map((meaning, idx) => (
         <Stack
           key={`meaning-${idx}`}
@@ -249,7 +279,14 @@ const Meanings = ({ meanings }) => {
             borderRadius: "8px"
           }}>
           <Flex align="center" gap="xs">
-            <Badge variant="default" color="blue" radius="md" size="md">
+            <Badge
+              variant="default"
+              color="blue"
+              radius="md"
+              size="md"
+              style={{
+                border: `1px solid ${theme.colors.gray[5]}`
+              }}>
               et
             </Badge>
             <Text
@@ -261,14 +298,21 @@ const Meanings = ({ meanings }) => {
             />
           </Flex>
           <Flex align="center" gap="xs">
-            <Badge variant="default" color="blue" radius="md" size="md">
+            <Badge
+              variant="default"
+              color="blue"
+              radius="md"
+              size="md"
+              style={{
+                border: `1px solid ${theme.colors.gray[5]}`
+              }}>
               en
             </Badge>
             <Text
               flex={1}
               dangerouslySetInnerHTML={{
                 __html: parseEkiForeignText(
-                  meaning.definitionEn.translations?.[0]?.text
+                  meaning.definitionEn?.translations?.[0]?.text
                 )
               }}
               style={{ color: theme.colors.dark[9] }}
@@ -276,20 +320,29 @@ const Meanings = ({ meanings }) => {
           </Flex>
           {meaning.synonyms.length > 0 && (
             <Stack gap="xs">
-              <Title order={5} style={{ color: theme.colors.dark[9] }}>Synonyms:</Title>
-              <Text style={{ color: theme.colors.dark[9] }}>{meaning.synonyms.join(", ")}</Text>
+              <Title order={5} style={{ color: theme.colors.dark[9] }}>
+                Synonyms:
+              </Title>
+              <Text style={{ color: theme.colors.dark[9] }}>
+                {meaning.synonyms.join(", ")}
+              </Text>
             </Stack>
           )}
           {meaning.partOfSpeech.length > 0 && (
             <Stack gap="xs">
-              <Title order={5} style={{ color: theme.colors.dark[9] }}>Part of speech:</Title>
+              <Title order={5} style={{ color: theme.colors.dark[9] }}>
+                Part of speech:
+              </Title>
               <Flex gap="md">
                 {meaning.partOfSpeech.map((pos, idx) => (
                   <Badge
                     key={`partOfSpeech-${idx}`}
                     variant="light"
                     color="indigo"
-                    size="lg">
+                    size="lg"
+                    style={{
+                      border: `1px solid ${theme.colors.gray[5]}`
+                    }}>
                     {pos.value}
                   </Badge>
                 ))}
@@ -298,10 +351,16 @@ const Meanings = ({ meanings }) => {
           )}
           {meaning.examples.length > 0 && (
             <Stack gap="xs">
-              <Title order={5} style={{ color: theme.colors.dark[9] }}>Examples:</Title>
+              <Title order={5} style={{ color: theme.colors.dark[9] }}>
+                Examples:
+              </Title>
               <List>
                 {meaning.examples.map((example, idx) => (
-                  <List.Item key={`example-${idx}`} style={{ color: theme.colors.dark[9] }}>{example}</List.Item>
+                  <List.Item
+                    key={`example-${idx}`}
+                    style={{ color: theme.colors.dark[9] }}>
+                    {example}
+                  </List.Item>
                 ))}
               </List>
             </Stack>
@@ -320,14 +379,24 @@ const WordForms = ({ wordForms }) => {
       <Title order={3}>Change type:</Title>
       <Table>
         <Table.Thead>
-          <Table.Tr>
+          <Table.Tr
+            style={{
+              borderBottom: `1px solid ${theme.colors.gray[2]}`
+            }}>
             <Table.Th>Form</Table.Th>
             <Table.Th>Word</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
           {wordForms.map((wordForm, idx) => (
-            <Table.Tr key={`wordForm-${idx}`}>
+            <Table.Tr
+              key={`wordForm-${idx}`}
+              style={{
+                borderBottom:
+                  idx === wordForms.length - 1
+                    ? "none"
+                    : `1px solid ${theme.colors.gray[2]}`
+              }}>
               <Table.Td>{wordForm.morphValue}</Table.Td>
               <Table.Td>{wordForm.value}</Table.Td>
             </Table.Tr>
@@ -342,11 +411,11 @@ const EmptyState = ({ word }) => {
   const theme = useMantineTheme()
 
   return (
-    <Box>
-      <Center>
-        <IconMoodConfuzedFilled size={150} />
-      </Center>
+    <Flex align="center" justify="center" h={460}>
       <Stack gap={0}>
+        <Center>
+          <IconMoodConfuzedFilled size={150} />
+        </Center>
         <Text style={{ textAlign: "center", color: theme.colors.dark[9] }}>
           The word explanation data comes from Sonaveeb.ee.
         </Text>
@@ -355,7 +424,64 @@ const EmptyState = ({ word }) => {
           of the word.
         </Text>
       </Stack>
-    </Box>
+    </Flex>
+  )
+}
+
+const CustomModal = ({ opened, onClose, title, isLoading, children }) => {
+  const theme = useMantineTheme()
+
+  if (!opened) {
+    return null
+  }
+
+  return (
+    <Flex justify="center" align="center" className="sonastik-overlay-modal">
+      <Paper shadow="lg" w={800} h={600} bg="white">
+        <Box
+          p="sm"
+          style={{
+            borderBottom: `1px solid ${theme.colors.gray[2]}`
+          }}>
+          {title}
+        </Box>
+        <Box
+          p="sm"
+          style={{
+            overflowY: "auto",
+            maxHeight: "calc(100% - 128px)",
+            wordWrap: "break-word",
+            ...(isLoading
+              ? {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minHeight: 472
+                }
+              : {})
+          }}>
+          {isLoading ? (
+            <Text className="sonastik-typewriter">Loading...</Text>
+          ) : (
+            children
+          )}
+        </Box>
+        <Center
+          p="sm"
+          style={{
+            borderTop: `1px solid ${theme.colors.gray[2]}`
+          }}>
+          <Button
+            onClick={onClose}
+            variant="filled"
+            style={{
+              backgroundColor: theme.colors.blue[8]
+            }}>
+            Close
+          </Button>
+        </Center>
+      </Paper>
+    </Flex>
   )
 }
 
@@ -371,6 +497,6 @@ function useGetWordExplanation(requestedWord = null) {
 
 function parseEkiForeignText(text) {
   return text
-    .replace(/<eki-foreign>/g, "<i>")
-    .replace(/<\/eki-foreign>/g, "</i>")
+    ?.replace(/<eki-foreign>/g, "<i>")
+    ?.replace(/<\/eki-foreign>/g, "</i>")
 }

@@ -1,16 +1,19 @@
 {
   "name": "sonastik",
   "displayName": "Sonastik",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A word explainer for Estonian language.",
   "author": "Chloe & Matt OÜ <hi@chloematt.com>",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
     "package": "plasmo package",
-    "dev:firefox": "plasmo dev --target=firefox-mv2",
+    "dev:firefox": "plasmo dev --target=firefox-mv2 --verbose",
     "build:firefox": "plasmo build --target=firefox-mv2",
-    "package:firefox": "plasmo package --target=firefox-mv2"
+    "package:firefox": "plasmo package --target=firefox-mv2",
+    "dev:safari": "plasmo dev --target=safari-mv3",
+    "build:safari": "plasmo build --target=safari-mv3",
+    "package:safari": "plasmo package --target=safari-mv3"
   },
   "dependencies": {
     "@apollo/client": "^3.9.5",
@@ -18,7 +21,7 @@
     "@mantine/hooks": "^7.5.3",
     "@tabler/icons-react": "^2.47.0",
     "graphql": "^16.8.1",
-    "plasmo": "0.84.2",
+    "plasmo": "0.85.2",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
