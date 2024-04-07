@@ -7,9 +7,9 @@
     ]
   },
   "devDependencies": {
-    "@redwoodjs/cli-data-migrate": "7.0.3",
-    "@redwoodjs/core": "7.0.3",
-    "@redwoodjs/project-config": "7.0.3"
+    "@redwoodjs/cli-data-migrate": "7.3.0",
+    "@redwoodjs/core": "7.3.0",
+    "@redwoodjs/project-config": "7.3.0"
   },
   "eslintConfig": {
     "extends": "@redwoodjs/eslint-config",
