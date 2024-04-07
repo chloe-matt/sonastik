@@ -411,11 +411,11 @@ const EmptyState = ({ word }) => {
   const theme = useMantineTheme()
 
   return (
-    <Box>
-      <Center>
-        <IconMoodConfuzedFilled size={150} />
-      </Center>
+    <Flex align="center" justify="center" h={460}>
       <Stack gap={0}>
+        <Center>
+          <IconMoodConfuzedFilled size={150} />
+        </Center>
         <Text style={{ textAlign: "center", color: theme.colors.dark[9] }}>
           The word explanation data comes from Sonaveeb.ee.
         </Text>
@@ -424,7 +424,7 @@ const EmptyState = ({ word }) => {
           of the word.
         </Text>
       </Stack>
-    </Box>
+    </Flex>
   )
 }
 
@@ -437,7 +437,7 @@ const CustomModal = ({ opened, onClose, title, isLoading, children }) => {
 
   return (
     <Flex justify="center" align="center" className="sonastik-overlay-modal">
-      <Paper shadow="lg" w={800} h={450} bg="white">
+      <Paper shadow="lg" w={800} h={600} bg="white">
         <Box
           p="sm"
           style={{
@@ -456,7 +456,7 @@ const CustomModal = ({ opened, onClose, title, isLoading, children }) => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  minHeight: 325
+                  minHeight: 472
                 }
               : {})
           }}>
