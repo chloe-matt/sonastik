@@ -7,6 +7,7 @@
     ]
   },
   "devDependencies": {
+    "@redwoodjs/auth-dbauth-setup": "7.3.0",
     "@redwoodjs/cli-data-migrate": "7.3.0",
     "@redwoodjs/core": "7.3.0",
     "@redwoodjs/project-config": "7.3.0"

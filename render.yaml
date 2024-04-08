@@ -46,6 +46,8 @@ services:
       property: connectionString
   - key: DEEPL_API_KEY
     sync: false
+  - key: SESSION_SECRET
+    sync: false
 
 # A Redis instance
 - type: redis

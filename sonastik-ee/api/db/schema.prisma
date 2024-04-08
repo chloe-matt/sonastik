@@ -14,6 +14,15 @@ generator client {
   binaryTargets = "native"
 }
 
+model User {
+  id                  Int       @id @default(autoincrement())
+  email               String    @unique
+  hashedPassword      String
+  salt                String
+  resetToken          String?
+  resetTokenExpiresAt DateTime?
+}
+
 // words analytics table
 model WordLog {
   id            Int      @id @default(autoincrement())
