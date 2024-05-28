@@ -61,4 +61,4 @@ services:
 databases:
   - name: sonastik-ee-db
     region: frankfurt
-    plan: free
+    plan: starter
