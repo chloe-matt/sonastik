@@ -14,10 +14,10 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-redwood}:${POSTGRES_PASSWORD:-redwood}@db:5432/${POSTGRES_DB:-redwood}
-      - TEST_DATABASE_URL=postgresql://${POSTGRES_USER:-redwood}:${POSTGRES_PASSWORD:-redwood}@db:5432/${POSTGRES_DB:-redwood}_test
-      - SESSION_SECRET=${SESSION_SECRET:-super_secret_session_key_change_me_in_production_please}
-      - DEEPL_API_KEY={$DEEPL_API_KEY}
+      - DATABASE_URL=${DATABASE_URL}
+      - TEST_DATABASE_URL=${TEST_DATABASE_URL}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - DEEPL_API_KEY=${DEEPL_API_KEY}
       - CACHE_HOST={$CACHE_HOST}
 
   web:
@@ -32,17 +32,6 @@ services:
     environment:
       - API_PROXY_TARGET=http://api:8911
       - SKIP_INSTALL_DEPS=true
-
-  db:
-    image: postgres:16-bookworm
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-redwood}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-redwood}
-      POSTGRES_DB: ${POSTGRES_DB:-redwood}
-    ports:
-      - '5432:5432'
-    volumes:
-      - ./postgres:/var/lib/postgresql/data
 
   # After starting with `docker compose -f ./docker-compose.prod.yml up`,
   # use the console to run commands in the container:
@@ -60,7 +49,5 @@ services:
       - /tmp
     command: 'true'
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-redwood}:${POSTGRES_PASSWORD:-redwood}@db:5432/${POSTGRES_DB:-redwood}
-      - TEST_DATABASE_URL=postgresql://${POSTGRES_USER:-redwood}:${POSTGRES_PASSWORD:-redwood}@db:5432/${POSTGRES_DB:-redwood}_test
-    depends_on:
-      - db
+      - DATABASE_URL=${DATABASE_URL}
+      - TEST_DATABASE_URL=${TEST_DATABASE_URL}
