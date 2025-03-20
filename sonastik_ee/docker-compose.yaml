@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sonastik_ee_migrate
+    command: /app/bin/migrate
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    networks:
+      - sonastik_network
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
   web:
     build:
       context: .
@@ -18,7 +33,10 @@ services:
       - DEEPL_API_KEY=${DEEPL_API_KEY}
       - DNS_CLUSTER_QUERY=${DNS_CLUSTER_QUERY}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     networks:
       - sonastik_network
     healthcheck:
