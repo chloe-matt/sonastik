@@ -6,9 +6,20 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: sonastik_ee_migrate
-    command: /app/bin/migrate
+    entrypoint: >
+      sh -c "
+        echo 'Waiting for database to be ready...'
+        while ! pg_isready -h db -p 5432 -U postgres; do
+          sleep 1
+        done
+        echo 'Database is ready, running migrations...'
+        /app/bin/sonastik_ee eval 'SonastikEe.Release.migrate()'
+      "
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=ecto://${DB_USER}:${DB_PASSWORD}@db:5432/sonastik_ee_prod
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_NAME=${DB_NAME:-sonastik_ee_prod}
     networks:
       - sonastik_network
     depends_on:
