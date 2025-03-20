@@ -23,7 +23,7 @@ services:
     networks:
       - sonastik_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4000"]
+      test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/localhost/4000' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
