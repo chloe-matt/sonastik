@@ -1,0 +1,140 @@
+<!-- filepath: /Users/asep/Projects/elixir/sonastik_ee/lib/sonastik_ee_web/live/home_live.html.heex -->
+<div class="min-h-screen bg-gray-50 flex flex-col items-center">
+  <header class="w-full py-4 px-6 flex justify-between items-center border-b border-gray-200">
+    <div class="text-2xl font-bold text-blue-600">Sõnastik.ee</div>
+    
+    <div class="flex items-center">
+      <nav class="flex items-center mr-6">
+        <a href="https://github.com/chloe-matt/sonastik/" 
+          target="_blank" 
+          class="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+          <span>
+            <%= if @current_language == "et" do %>
+              Lähtekood
+            <% else %>
+              Source Code
+            <% end %>
+          </span>
+        </a>
+      </nav>
+      
+      <!-- Language Chooser -->
+      <div class="relative group">
+        <button class="flex items-center space-x-1 bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm hover:shadow-md transition">
+          <span><%= if @current_language == "et", do: "ET", else: "EN" %></span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="absolute right-0 mt-1 w-24 bg-white rounded-md shadow-lg border border-gray-200 hidden group-hover:block z-10">
+          <a href="#" 
+            class={"block px-4 py-2 text-sm hover:bg-gray-100 #{if @current_language == "en", do: "bg-blue-50 text-blue-600", else: "text-gray-700"}"}
+            phx-click="change_language" 
+            phx-value-lang="en">English</a>
+          <a href="#" 
+            class={"block px-4 py-2 text-sm hover:bg-gray-100 #{if @current_language == "et", do: "bg-blue-50 text-blue-600", else: "text-gray-700"}"}
+            phx-click="change_language" 
+            phx-value-lang="et">Eesti</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex flex-col items-center flex-grow w-full px-4">
+    <div class="max-w-4xl w-full text-center pt-12">
+      <h1 class="text-5xl font-bold text-blue-600 mb-8">Sõnastik.ee</h1>
+      <p class="text-xl text-gray-600 mb-8">
+        <%= if @current_language == "et" do %>
+          Otsi eestikeelsete sõnade tähendusi ja kirjeldusi
+        <% else %>
+          Search for meanings and descriptions of Estonian words
+        <% end %>
+      </p>
+      
+      <form phx-submit="search" class="w-full mb-6">
+        <div class="relative">
+          <input 
+            type="text" 
+            name="query" 
+            placeholder={if @current_language == "et", do: "Sisesta sõna...", else: "Enter a word..."}
+            class="w-full py-4 px-6 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+            autocomplete="off"
+            phx-debounce="300"
+          />
+          <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <div class="flex flex-wrap justify-center gap-3 mb-8">
+        <span class="px-4 py-2 bg-gray-200 rounded-full text-gray-700 hover:bg-blue-100 cursor-pointer transition" phx-click="search-example" phx-value-word="keel">keel</span>
+        <span class="px-4 py-2 bg-gray-200 rounded-full text-gray-700 hover:bg-blue-100 cursor-pointer transition" phx-click="search-example" phx-value-word="tere">tere</span>
+        <span class="px-4 py-2 bg-gray-200 rounded-full text-gray-700 hover:bg-blue-100 cursor-pointer transition" phx-click="search-example" phx-value-word="sõna">sõna</span>
+        <span class="px-4 py-2 bg-gray-200 rounded-full text-gray-700 hover:bg-blue-100 cursor-pointer transition" phx-click="search-example" phx-value-word="õppima">õppima</span>
+        <span class="px-4 py-2 bg-gray-200 rounded-full text-gray-700 hover:bg-blue-100 cursor-pointer transition" phx-click="search-example" phx-value-word="raamat">raamat</span>
+      </div>
+
+      <div class="mt-6 mb-10 text-center">
+        <h3 class="text-lg font-semibold mb-3">
+          <%= if @current_language == "et" do %>
+            Paigalda oma brauserisse:
+          <% else %>
+            Install on your browser:
+          <% end %>
+        </h3>
+        <div class="flex items-center justify-center gap-4">
+          <a href="https://chromewebstore.google.com/detail/sonastik/ijdjjhijnaefjpgmmhklebjmobkcnndf" 
+             target="_blank"
+             class="inline-block hover:opacity-80 transition-opacity">
+            <img src="/images/chrome-store.png" 
+                 alt="Chrome Web Store" 
+                 class="h-12 md:h-15 w-auto" />
+          </a>
+          <a href="https://addons.mozilla.org/en-US/firefox/addon/s%C3%B5nastik/" 
+             target="_blank"
+             class="inline-block hover:opacity-80 transition-opacity">
+            <img src="/images/firefox-addons.svg" 
+                 alt="Firefox Add-ons" 
+                 class="h-12 md:h-15 w-auto" />
+          </a>
+        </div>
+        <p class="text-sm text-gray-600 mt-2">
+          <%= if @current_language == "et" do %>
+            Kasuta Sõnastik.ee otse oma brauseris – kiireks ja mugavaks sõnade tõlkimiseks.
+          <% else %>
+            Use Sõnastik.ee directly in your browser – for quick and convenient word translations.
+          <% end %>
+        </p>
+      </div>
+    </div>
+
+    <%= if @dictionary_data do %>
+      <div class="max-w-4xl w-full bg-white rounded-lg shadow-md p-6 mb-8">
+        <%= if is_map(@dictionary_data) && Map.has_key?(@dictionary_data, "searchResult") && length(@dictionary_data["searchResult"]) > 0 do %>
+          <.explanation_area dictionary={@dictionary_data} />
+        <% else %>
+          <.empty_state />
+        <% end %>
+      </div>
+    <% end %>
+  </main>
+
+  <footer class="w-full py-6 px-4 mt-8 border-t border-gray-200 text-center text-gray-600">
+    <p class="mb-1">
+      <%= if @current_language == "et" do %>
+        Tehtud 💙🖤🤍 armastusega, Chloe & Matt OÜ
+      <% else %>
+        Made with 💙🖤🤍 by Chloe & Matt OÜ
+      <% end %>
+    </p>
+    <p class="text-sm">
+      © 2023-2025 <%= if @current_language == "et", do: "Kõik õigused kaitstud.", else: "All rights reserved." %>
+    </p>
+  </footer>
+</div>
