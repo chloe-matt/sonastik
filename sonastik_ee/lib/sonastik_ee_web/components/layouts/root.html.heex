@@ -4,13 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="SonastikEe" suffix=" · Phoenix Framework">
+    <.live_title default="Sõnastik.ee - Search for meanings and description of Estonian words">
       {assigns[:page_title]}
     </.live_title>
     <script defer data-domain="sonastik.ee" src="https://plausible.io/js/script.outbound-links.js"></script>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href={~p"/images/icon.png"} />
+    <link rel="apple-touch-icon" href={~p"/images/icon.png"} />
   </head>
   <body class="bg-white">
     {@inner_content}
