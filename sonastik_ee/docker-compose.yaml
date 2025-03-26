@@ -24,7 +24,6 @@ services:
       # Crowdsec
       - traefik.http.middlewares.crowdsec.plugin.bouncer.enabled=true
       - traefik.http.middlewares.crowdsec.plugin.bouncer.crowdseclapikey=${CROWDSEC_BOUNCER_KEY}
-      - traefik.http.middlewares.crowdsec.plugin.bouncer.crowdsecappsecenabled=true
       - traefik.http.routers.sonastik.middlewares=sonastik-middleware,crowdsec@docker
     depends_on:
       db:
@@ -63,11 +62,10 @@ services:
     container_name: sonastik_crowdsec
     restart: unless-stopped
     environment:
-      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules
+      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-dos
       - GID=1000
       - BOUNCER_KEY_TRAEFIK=${CROWDSEC_BOUNCER_KEY}
     volumes:
-      - ./acquis.yaml:/etc/crowdsec/acquis.yaml:ro
       - crowdsec_db:/var/lib/crowdsec/data/
       - crowdsec_config:/etc/crowdsec/
       - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
