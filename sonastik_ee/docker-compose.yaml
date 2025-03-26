@@ -26,6 +26,11 @@ services:
       - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.trustForwardHeader=true
       - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.authResponseHeaders=X-Crowdsec-Validation
       - traefik.http.routers.sonastik.middlewares=crowdsec-forwardauth@docker,sonastik-middleware@docker
+      # Phoenix related dns
+      - traefik.http.routers.sonastik.rule=Host(`www.sonastik.ee`)
+      - traefik.http.routers.sonastik.tls=true
+      - traefik.http.routers.sonastik.tls.certresolver=letsencrypt
+      - traefik.http.services.sonastik.loadbalancer.server.port=4000
     depends_on:
       db:
         condition: service_healthy
