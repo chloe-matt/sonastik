@@ -83,6 +83,8 @@ services:
 networks:
   sonastik_network:
     driver: bridge
+  coolify:
+    external: true
 
 volumes:
   sonastik_db_data:
