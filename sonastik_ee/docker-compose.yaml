@@ -22,11 +22,10 @@ services:
       - traefik.http.middlewares.sonastik-middleware.redirectregex.replacement=${1}://www.${2}
       - traefik.http.middlewares.sonastik-middleware.redirectregex.permanent=true
       # Crowdsec
-      - traefik.http.middlewares.crowdsec-root.plugin.crowdsec-bouncer.enabled=true
-      - traefik.http.middlewares.crowdsec-root.plugin.crowdsec-bouncer.crowdseclapikey=${CROWDSEC_BOUNCER_KEY}
-      - traefik.http.middlewares.crowdsec-root.plugin.crowdsec-bouncer.crowdseclapischeme=http
-      - traefik.http.middlewares.crowdsec-root.plugin.crowdsec-bouncer.crowdseclapihost=crowdsec:8080
-      - traefik.http.routers.sonastik.middlewares=sonastik-middleware
+      - traefik.http.middlewares.crowdsec.plugin.bouncer.enabled=true
+      - traefik.http.middlewares.crowdsec.plugin.bouncer.crowdseclapikey=${CROWDSEC_BOUNCER_KEY}
+      - traefik.http.middlewares.crowdsec.plugin.bouncer.crowdsecappsecenabled=true
+      - traefik.http.routers.sonastik.middlewares=sonastik-middleware,crowdsec@docker
     depends_on:
       db:
         condition: service_healthy
@@ -64,9 +63,11 @@ services:
     container_name: sonastik_crowdsec
     restart: unless-stopped
     environment:
-      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-dos
+      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules
       - GID=1000
+      - BOUNCER_KEY_TRAEFIK=${CROWDSEC_BOUNCER_KEY}
     volumes:
+      - ./acquis.yaml:/etc/crowdsec/acquis.yaml:ro
       - crowdsec_db:/var/lib/crowdsec/data/
       - crowdsec_config:/etc/crowdsec/
       - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
