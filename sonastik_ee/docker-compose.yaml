@@ -21,6 +21,7 @@ services:
       - traefik.http.middlewares.sonastik-middleware.redirectregex.regex=^(http|https)://(?:www\.)?(.+)
       - traefik.http.middlewares.sonastik-middleware.redirectregex.replacement=${1}://www.${2}
       - traefik.http.middlewares.sonastik-middleware.redirectregex.permanent=true
+      - traefik.http.routers.sonastik.middlewares=sonastik-middleware
       # # Crowdsec
       # - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.address=http://crowdsec:8080/api/v1/forwardAuth
       # - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.trustForwardHeader=true
