@@ -22,6 +22,9 @@ services:
       - traefik.http.middlewares.sonastik-middleware.redirectregex.replacement=${1}://www.${2}
       - traefik.http.middlewares.sonastik-middleware.redirectregex.permanent=true
       - traefik.http.routers.sonastik.middlewares=sonastik-middleware
+      - traefik.http.middlewares.crowdsec.plugin.crowdsec.apiUrl=http://crowdsec:8080
+      - traefik.http.middlewares.crowdsec.plugin.crowdsec.apiKey=${CROWDSEC_BOUNCER_KEY}
+      - traefik.http.routers.sonastik.middlewares=crowdsec@docker
     depends_on:
       db:
         condition: service_healthy
@@ -67,18 +70,6 @@ services:
       - /var/log/traefik/:/var/log/traefik/:ro
     networks:
       - sonastik_network
-
-  crowdsec-bouncer:
-    image: crowdsecurity/crowdsec-traefik-bouncer-plugin:latest
-    container_name: sonastik_crowdsec_bouncer
-    restart: unless-stopped
-    environment:
-      - CROWDSEC_AGENT_HOST=crowdsec:8080
-      - BOUNCER_KEY=${CROWDSEC_BOUNCER_KEY}
-    networks:
-      - sonastik_network
-    depends_on:
-      - crowdsec
 
 networks:
   sonastik_network:
