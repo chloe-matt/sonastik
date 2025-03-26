@@ -24,7 +24,8 @@ services:
       # CrowdSec middleware configuration
       - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.enabled=true
       - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.url=http://sonastik_crowdsec:8080
-      - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.CrowdsecLapiKey=${CROWDSEC_BOUNCER_KEY}
+      - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.crowdseclapikey=BRixJk4qYHoN4ctZOV84WijoSc4tYxmrg/96VgTpueE=
+      
       # Router configuration
       - traefik.http.routers.sonastik.middlewares=sonastik-middleware,sonastik_crowdsec
     depends_on:
