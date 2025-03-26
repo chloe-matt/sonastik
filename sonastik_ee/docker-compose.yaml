@@ -33,6 +33,7 @@ services:
         condition: service_healthy
     networks:
       - sonastik_network
+      - coolify
     healthcheck:
       test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/localhost/4000' || exit 1"]
       interval: 30s
@@ -74,6 +75,10 @@ services:
       - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
     networks:
       - sonastik_network
+      - coolify
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.sonastik-crowdsec.loadbalancer.server.port=8080
 
 networks:
   sonastik_network:
