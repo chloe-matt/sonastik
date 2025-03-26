@@ -67,18 +67,14 @@ services:
       - /var/log/traefik/:/var/log/traefik/:ro
     networks:
       - sonastik_network
-    depends_on:
-      - web
 
-  crowdsec-traefik-bouncer:
-    image: crowdsecurity/crowdsec-traefik-bouncer:latest
+  crowdsec-bouncer:
+    image: crowdsecurity/crowdsec-traefik-bouncer-plugin:latest
     container_name: sonastik_crowdsec_bouncer
     restart: unless-stopped
     environment:
       - CROWDSEC_AGENT_HOST=crowdsec:8080
-      - BOUNCER_KEY=${CROWDSEC_BOUNCER_KEY} # Generate this with `cscli bouncers add traefik-bouncer`
-      - API_URL=http://crowdsec:8080
-      - API_KEY=${CROWDSEC_BOUNCER_KEY}
+      - BOUNCER_KEY=${CROWDSEC_BOUNCER_KEY}
     networks:
       - sonastik_network
     depends_on:
