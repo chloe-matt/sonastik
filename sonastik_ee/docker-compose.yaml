@@ -21,16 +21,11 @@ services:
       - traefik.http.middlewares.sonastik-middleware.redirectregex.regex=^(http|https)://(?:www\.)?(.+)
       - traefik.http.middlewares.sonastik-middleware.redirectregex.replacement=${1}://www.${2}
       - traefik.http.middlewares.sonastik-middleware.redirectregex.permanent=true
-      # Crowdsec
-      - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.address=http://crowdsec:8080/api/v1/forwardAuth
-      - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.trustForwardHeader=true
-      - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.authResponseHeaders=X-Crowdsec-Validation
-      - traefik.http.routers.sonastik.middlewares=crowdsec-forwardauth@docker,sonastik-middleware@docker
-      # Phoenix related dns
-      - traefik.http.routers.sonastik.rule=Host(`www.sonastik.ee`)
-      - traefik.http.routers.sonastik.tls=true
-      - traefik.http.routers.sonastik.tls.certresolver=letsencrypt
-      - traefik.http.services.sonastik.loadbalancer.server.port=4000
+      # # Crowdsec
+      # - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.address=http://crowdsec:8080/api/v1/forwardAuth
+      # - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.trustForwardHeader=true
+      # - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.authResponseHeaders=X-Crowdsec-Validation
+      # - traefik.http.routers.sonastik.middlewares=crowdsec-forwardauth@docker,sonastik-middleware@docker
     depends_on:
       db:
         condition: service_healthy
@@ -62,21 +57,21 @@ services:
       retries: 5
       start_period: 10s
 
-  # CrowdSec services
-  crowdsec:
-    image: crowdsecurity/crowdsec:latest
-    container_name: sonastik_crowdsec
-    restart: unless-stopped
-    environment:
-      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-dos
-      - GID=1000
-      - DISABLE_LOCAL_API=false
-    volumes:
-      - crowdsec_db:/var/lib/crowdsec/data/
-      - crowdsec_config:/etc/crowdsec/
-      - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
-    networks:
-      - sonastik_network
+  # # CrowdSec services
+  # crowdsec:
+  #   image: crowdsecurity/crowdsec:latest
+  #   container_name: sonastik_crowdsec
+  #   restart: unless-stopped
+  #   environment:
+  #     - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-dos
+  #     - GID=1000
+  #     - DISABLE_LOCAL_API=false
+  #   volumes:
+  #     - crowdsec_db:/var/lib/crowdsec/data/
+  #     - crowdsec_config:/etc/crowdsec/
+  #     - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
+  #   networks:
+  #     - sonastik_network
 
 networks:
   sonastik_network:
@@ -84,5 +79,5 @@ networks:
 
 volumes:
   sonastik_db_data:
-  crowdsec_db:
-  crowdsec_config:
+  # crowdsec_db:
+  # crowdsec_config:
