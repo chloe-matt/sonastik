@@ -22,10 +22,8 @@ services:
       - traefik.http.middlewares.sonastik-middleware.redirectregex.replacement=${1}://www.${2}
       - traefik.http.middlewares.sonastik-middleware.redirectregex.permanent=true
       # Crowdsec
-      # - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.address=http://crowdsec:8080/api/v1/forwardAuth
-      # - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.trustForwardHeader=true
-      # - traefik.http.middlewares.crowdsec-forwardauth.forwardauth.authResponseHeaders=X-Crowdsec-Validation
-      - traefik.http.routers.sonastik.middlewares=sonastik-middleware
+      - traefik.http.middlewares.crowdsec.plugin.traefik-crowdsec-bouncer.url=http://crowdsec-bouncer:8080
+      - traefik.http.routers.sonastik.middlewares=sonastik-middleware,crowdsec@docker
     depends_on:
       db:
         condition: service_healthy
@@ -65,13 +63,24 @@ services:
     environment:
       - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-dos
       - GID=1000
-      - DISABLE_LOCAL_API=false
     volumes:
       - crowdsec_db:/var/lib/crowdsec/data/
       - crowdsec_config:/etc/crowdsec/
       - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
     networks:
       - sonastik_network
+
+  crowdsec-bouncer:
+    image: crowdsecurity/crowdsec-traefik-bouncer:latest
+    container_name: sonastik_crowdsec_bouncer
+    restart: unless-stopped
+    environment:
+      - CROWDSEC_AGENT_HOST=crowdsec:8080
+      - BOUNCER_KEY=${CROWDSEC_BOUNCER_KEY}
+    networks:
+      - sonastik_network
+    depends_on:
+      - crowdsec
 
 networks:
   sonastik_network:
