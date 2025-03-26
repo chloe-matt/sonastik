@@ -23,7 +23,7 @@ services:
       - traefik.http.middlewares.sonastik-middleware.redirectregex.permanent=true
       # Crowdsec
       - traefik.http.middlewares.crowdsec.plugin.bouncer.enabled=true
-      - traefik.http.middlewares.crowdsec.plugin.bouncer.crowdseclapikey=${CROWDSEC_BOUNCER_KEY}
+      - "traefik.http.middlewares.crowdsec.plugin.bouncer.crowdseclapikey=${CROWDSEC_BOUNCER_KEY}"
       - traefik.http.routers.sonastik.middlewares=sonastik-middleware,crowdsec@docker
     depends_on:
       db:
