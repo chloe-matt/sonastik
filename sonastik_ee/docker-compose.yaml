@@ -65,7 +65,7 @@ services:
     container_name: sonastik_crowdsec
     restart: unless-stopped
     environment:
-      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-logs
+      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-dos crowdsecurity/base-http-scenarios
       - GID=1000
     volumes:
       - crowdsec_db:/var/lib/crowdsec/data/
