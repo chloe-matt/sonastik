@@ -63,22 +63,23 @@ services:
 
   # CrowdSec services
   crowdsec:
-    image: crowdsecurity/crowdsec:v1.6.1-2
+    image: crowdsecurity/crowdsec:latest
     container_name: sonastik_crowdsec
     restart: unless-stopped
     environment:
-      - COLLECTIONS=crowdsecurity/traefik
-      - CUSTOM_HOSTNAME=crowdsec
+      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-dos
+      - GID=1000
       - BOUNCER_KEY_TRAEFIK="BRixJk4qYHoN4ctZOV84WijoSc4tYxmrg/96VgTpueE="
     volumes:
-      - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
       - crowdsec_db:/var/lib/crowdsec/data/
-      - crowdsec_config:/etc/crowdsec/  
+      - crowdsec_config:/etc/crowdsec/
+      - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
     networks:
       - sonastik_network
       - coolify
     labels:
       - traefik.enable=true
+      - traefik.http.services.sonastik_crowdsec.loadbalancer.server.port=8080
 
 networks:
   sonastik_network:
