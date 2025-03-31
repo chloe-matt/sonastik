@@ -27,7 +27,7 @@ services:
       - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.crowdseclapikey=$${CROWDSEC_BOUNCER_KEY}
       
       # Router configuration
-      - traefik.http.routers.sonastik.middlewares=sonastik-middleware,sonastik_crodwsec
+      - traefik.http.routers.sonastik.middlewares=sonastik-middleware,sonastik_crowdsec
     depends_on:
       db:
         condition: service_healthy
