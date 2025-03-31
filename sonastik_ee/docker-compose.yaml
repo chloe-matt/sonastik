@@ -78,7 +78,7 @@ services:
       - coolify
     labels:
       - traefik.enable=true
-      - traefik.http.services.web.loadbalancer.server.port=8080
+      - traefik.http.services.sonastik_crowdsec.loadbalancer.server.port=8080
 
 networks:
   sonastik_network:
