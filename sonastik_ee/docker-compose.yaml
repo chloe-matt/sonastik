@@ -22,13 +22,13 @@ services:
       - traefik.http.middlewares.sonastik-middleware.redirectregex.replacement=${1}://www.${2}
       - traefik.http.middlewares.sonastik-middleware.redirectregex.permanent=true
       # CrowdSec middleware configuration
-      - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.enabled=true
-      - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.url=http://sonastik_crowdsec:8080
-      - "traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.crowdseclapikey=BRixJk4qYHoN4ctZOV84WijoSc4tYxmrg/96VgTpueE="
-      - "traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.crowdsecmode=stream"
+      # - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.enabled=true
+      # - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.url=http://sonastik_crowdsec:8080
+      # - "traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.crowdseclapikey=BRixJk4qYHoN4ctZOV84WijoSc4tYxmrg/96VgTpueE="
+      # - "traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.crowdsecmode=stream"
       
       # Router configuration
-      - traefik.http.routers.sonastik.middlewares=sonastik-middleware,sonastik_crowdsec
+      - traefik.http.routers.sonastik.middlewares=sonastik-middleware
     depends_on:
       db:
         condition: service_healthy
