@@ -72,7 +72,7 @@ services:
       - CUSTOM_HOSTNAME=crowdsec
       - BOUNCER_KEY_TRAEFIK="BRixJk4qYHoN4ctZOV84WijoSc4tYxmrg/96VgTpueE="
     volumes:
-      - ./acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - ./acquis.yaml:/etc/crowdsec/acquis.d/acquis.yaml:ro
       - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
       - crowdsec_db:/var/lib/crowdsec/data/
       - crowdsec_config:/etc/crowdsec/
