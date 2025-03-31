@@ -71,8 +71,6 @@ services:
       - COLLECTIONS=crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules
       - CUSTOM_HOSTNAME=crowdsec
       - BOUNCER_KEY_TRAEFIK="BRixJk4qYHoN4ctZOV84WijoSc4tYxmrg/96VgTpueE="
-    ports:
-      - "8080:8080"
     volumes:
       - ./acquis.yaml:/etc/crowdsec/acquis.d/acquis.yaml:ro
       - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
