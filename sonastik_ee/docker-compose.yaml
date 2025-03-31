@@ -26,6 +26,7 @@ services:
       - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.url=http://sonastik_crowdsec:8080
       - "traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.crowdseclapikey=BRixJk4qYHoN4ctZOV84WijoSc4tYxmrg/96VgTpueE="
       - "traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.crowdsecmode=stream"
+      - "traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.crowdsecappsecenabled=true"
       
       # Router configuration
       - traefik.http.routers.sonastik.middlewares=sonastik-middleware,sonastik_crowdsec
@@ -63,23 +64,24 @@ services:
 
   # CrowdSec services
   crowdsec:
-    image: crowdsecurity/crowdsec:latest
+    image: crowdsecurity/crowdsec:v1.6.1-2
     container_name: sonastik_crowdsec
     restart: unless-stopped
     environment:
-      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-dos
-      - GID=1000
+      - COLLECTIONS=crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules
+      - CUSTOM_HOSTNAME=crowdsec
       - BOUNCER_KEY_TRAEFIK="BRixJk4qYHoN4ctZOV84WijoSc4tYxmrg/96VgTpueE="
     volumes:
+      - ./acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
       - crowdsec_db:/var/lib/crowdsec/data/
       - crowdsec_config:/etc/crowdsec/
-      - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
+      
     networks:
       - sonastik_network
       - coolify
     labels:
       - traefik.enable=true
-      - traefik.http.services.sonastik_crowdsec.loadbalancer.server.port=8080
 
 networks:
   sonastik_network:
