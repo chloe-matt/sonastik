@@ -21,20 +21,12 @@ services:
       - traefik.http.middlewares.sonastik-middleware.redirectregex.regex=^(http|https)://(?:www\.)?(.+)
       - traefik.http.middlewares.sonastik-middleware.redirectregex.replacement=${1}://www.${2}
       - traefik.http.middlewares.sonastik-middleware.redirectregex.permanent=true
-      # CrowdSec middleware configuration
-      # - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.enabled=true
-      # - traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.url=http://sonastik_crowdsec:8080
-      # - "traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.crowdseclapikey=BRixJk4qYHoN4ctZOV84WijoSc4tYxmrg/96VgTpueE="
-      # - "traefik.http.middlewares.sonastik_crowdsec.plugin.bouncer.crowdsecmode=stream"
-      
-      # Router configuration
       - traefik.http.routers.sonastik.middlewares=sonastik-middleware
     depends_on:
       db:
         condition: service_healthy
     networks:
       - sonastik_network
-      - coolify
     healthcheck:
       test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/localhost/4000' || exit 1"]
       interval: 30s
@@ -61,33 +53,9 @@ services:
       retries: 5
       start_period: 10s
 
-  # CrowdSec services
-  crowdsec:
-    image: crowdsecurity/crowdsec:latest
-    container_name: sonastik_crowdsec
-    restart: unless-stopped
-    environment:
-      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-dos
-      - GID=1000
-      - BOUNCER_KEY_TRAEFIK="BRixJk4qYHoN4ctZOV84WijoSc4tYxmrg/96VgTpueE="
-    volumes:
-      - crowdsec_db:/var/lib/crowdsec/data/
-      - crowdsec_config:/etc/crowdsec/
-      - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
-    networks:
-      - sonastik_network
-      - coolify
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.sonastik_crowdsec.loadbalancer.server.port=8080
-
 networks:
   sonastik_network:
     driver: bridge
-  coolify:
-    external: true
 
 volumes:
   sonastik_db_data:
-  crowdsec_db:
-  crowdsec_config:
