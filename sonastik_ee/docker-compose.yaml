@@ -66,7 +66,7 @@ services:
     container_name: sonastik_crowdsec
     restart: unless-stopped
     environment:
-      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-dos
+      - COLLECTIONS=crowdsecurity/traefik
       - GID=1000
       - BOUNCER_KEY_TRAEFIK=${CROWDSEC_BOUNCER_KEY}
     volumes:
