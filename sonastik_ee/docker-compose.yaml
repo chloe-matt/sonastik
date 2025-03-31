@@ -71,17 +71,21 @@ services:
       - COLLECTIONS=crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules
       - CUSTOM_HOSTNAME=crowdsec
       - BOUNCER_KEY_TRAEFIK="BRixJk4qYHoN4ctZOV84WijoSc4tYxmrg/96VgTpueE="
+    ports:
+      - "8080:8080"
     volumes:
       - ./acquis.yaml:/etc/crowdsec/acquis.d/acquis.yaml:ro
       - /var/lib/coolify/traefik/logs/:/var/log/traefik/:ro
       - crowdsec_db:/var/lib/crowdsec/data/
-      - crowdsec_config:/etc/crowdsec/
-      
+      - crowdsec_config:/etc/crowdsec/  
     networks:
       - sonastik_network
       - coolify
     labels:
       - traefik.enable=true
+      - traefik.http.services.crowdsec.loadbalancer.server.port=8080
+      - traefik.http.routers.crowdsec.rule=Host(`crowdsec.localhost`)
+      - traefik.http.routers.crowdsec.entrypoints=web
 
 networks:
   sonastik_network:
