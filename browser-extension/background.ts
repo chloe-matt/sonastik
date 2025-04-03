@@ -20,3 +20,32 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     })
   }
 })
+
+// Listen for messages from content script
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "fetchWordData") {
+    fetchWordData(message.query)
+      .then(data => sendResponse(data))
+      .catch(error => sendResponse({ error: error.message }))
+    
+    // Return true to indicate you'll respond asynchronously
+    return true
+  }
+})
+
+async function fetchWordData(query) {
+  const API_BASE_URL = "https://www.sonastik.ee/api"
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/search?query=${encodeURIComponent(query)}`)
+    
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error("Error in background script:", error)
+    throw error
+  }
+}
