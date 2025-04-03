@@ -46,7 +46,7 @@ function IndexPopup() {
               Sõnastik.ee
             </Title>
             <Text size="xs" style={{ textAlign: "center" }}>
-              version 1.2.1
+              version 1.3.0
             </Text>
           </Stack>
         </Center>

@@ -1,11 +1,4 @@
 import {
-  ApolloClient,
-  ApolloProvider,
-  gql,
-  InMemoryCache,
-  useQuery
-} from "@apollo/client"
-import {
   Badge,
   Box,
   Button,
@@ -38,56 +31,13 @@ export const getStyle: PlasmoGetStyle = () => {
   return style
 }
 
-const GET_WORD_EXPLANATION = gql`
-  query GetWordExplanation($requestedWord: String!) {
-    dictionary(requestedWord: $requestedWord) {
-      requestedWord
-      estonianWord
-      searchResult {
-        wordClasses
-        similarWords
-        meanings {
-          definition
-          definitionEn {
-            translations {
-              text
-            }
-          }
-          partOfSpeech {
-            code
-            value
-          }
-          examples
-          synonyms
-        }
-        wordForms {
-          inflectionType
-          morphValue
-          code
-          value
-        }
-      }
-      translations {
-        from
-        to
-        input
-        translations
-      }
-    }
-  }
-`
-
-const client = new ApolloClient({
-  uri: "https://sonastik-ee-api.onrender.com/graphql",
-  cache: new InMemoryCache()
-})
+// Rest API
+const API_BASE_URL = "https://www.sonastik.ee/api";
 
 const PlasmoOverlay = () => (
-  <ApolloProvider client={client}>
-    <MantineProvider cssVariablesSelector=":host">
-      <OverlayView />
-    </MantineProvider>
-  </ApolloProvider>
+  <MantineProvider cssVariablesSelector=":host">
+    <OverlayView />
+  </MantineProvider>
 )
 
 export default PlasmoOverlay
@@ -486,13 +436,55 @@ const CustomModal = ({ opened, onClose, title, isLoading, children }) => {
 }
 
 function useGetWordExplanation(requestedWord = null) {
-  const { loading, error, data } = useQuery(GET_WORD_EXPLANATION, {
-    variables: { requestedWord },
-    skip: !requestedWord,
-    fetchPolicy: "cache-first"
-  })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [dictionary, setDictionary] = useState(null)
 
-  return { loading, error, dictionary: data?.dictionary }
+  useEffect(() => {
+    // Reset state when requestedWord changes
+    setLoading(false)
+    setError(null)
+    setDictionary(null)
+
+    // Skip if no word provided
+    if (!requestedWord) {
+      return
+    }
+
+    const fetchData = async () => {
+      setLoading(true)
+
+      try {
+        // Send message to background.js to make the API request
+        const data = await chrome.runtime.sendMessage({
+          action: "fetchWordData",
+          query: requestedWord
+        })
+        
+        if (data.error) {
+          throw new Error(data.error)
+        }
+        
+        const transformedData = {
+          requestedWord: requestedWord,
+          estonianWord: data.requestedWord || requestedWord,
+          searchResult: data.searchResult || [],
+          translations: data.translations || []
+        }
+        
+        setDictionary(transformedData)
+      } catch (err) {
+        console.error("Error fetching word explanation:", err)
+        setError(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [requestedWord])
+
+  return { loading, error, dictionary }
 }
 
 function parseEkiForeignText(text) {
