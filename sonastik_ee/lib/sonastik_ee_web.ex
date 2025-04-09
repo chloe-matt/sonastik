@@ -33,6 +33,7 @@ defmodule SonastikEeWeb do
   def channel do
     quote do
       use Phoenix.Channel
+
     end
   end
 
